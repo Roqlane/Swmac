@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-__all__ = ('MAC_ADDRESS_R', 'random_mac_address')
 import re
 import random
+import os
 
 # Regex to validate a MAC address, as 00-00-00-00-00-00 or
 # 00:00:00:00:00:00 or 000000000000.
@@ -109,3 +109,24 @@ def normalise_mac_address_windows(mac):
         return '-'.join([g.zfill(2) for g in m.groups()]).upper()
 
     return None
+
+def save_mac(mac, ifname):
+    path = "/tmp/saves/mac_saved_" + ifname
+    if not os.path.isdir("/tmp/saves"):
+        os.mkdir("/tmp/saves")
+    try:
+        with open(path, 'w') as f:
+            f.write(mac + '\n')
+        print(f"MAC address of {ifname} saved at", path)
+    except Exception:
+        print(f"Could not save MAC address of {ifname}")
+
+def read_saved_mac(ifname):
+    path = "/tmp/saves/mac_saved_" + ifname
+    if not os.path.exists(path):
+        return None
+    try:
+        with open("/tmp/saves/mac_saved_" + ifname, 'r') as f:
+            return f.read().strip()
+    except Exception:
+        return None

@@ -46,7 +46,10 @@ class LinuxSpooferIP(OsSpoofer):
     Linux platform specfic implementation for MAC spoofing.
     """
     def get_interface_mac(self, device):
-        result = subprocess.check_output(["ip", "link", "show", device], stderr=subprocess.STDOUT, universal_newlines=True)
+        try:
+            result = subprocess.check_output(["ip", "link", "show", device], stderr=subprocess.STDOUT, universal_newlines=True)
+        except Exception:
+            return None
         m = re.search("(?<=\w\s)(.*)(?=\sbrd)", result)
         if not hasattr(m, "group") or m.group(0) == None:
             return None
